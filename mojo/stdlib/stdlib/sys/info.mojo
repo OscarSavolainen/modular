@@ -613,7 +613,6 @@ fn _is_sm_8x_or_newer() -> Bool:
 fn _is_sm_9x_or_newer() -> Bool:
     return _is_sm_9x() or _is_sm_100x_or_newer()
 
-_is_amd_cdna
 @always_inline("nodebug")
 fn _is_sm_100x_or_newer() -> Bool:
     return _is_sm_100x() or _is_sm_120x_or_newer()
