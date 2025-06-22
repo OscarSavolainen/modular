@@ -746,6 +746,57 @@ alias RTX2060 = Info(
 
 
 # ===-----------------------------------------------------------------------===#
+# MI250X
+# ===-----------------------------------------------------------------------===#
+
+
+fn _get_mi250x_target() -> __mlir_type.`!kgen.target`:
+    """
+    Creates an MLIR target configuration for AMD MI250X GPU.
+
+    Returns:
+        MLIR target configuration for MI250X.
+    """
+    return __mlir_attr[
+        `#kgen.target<triple = "amdgcn-amd-amdhsa", `,
+        `arch = "gfx940", `,
+        `features = "", `,
+        `data_layout = "e-p:64:64-p1:64:64-p2:32:32-p3:32:32-p4:64:64-p5:32:32-p6:32:32-p7:160:256:256:32-p8:128:128:128:48-p9:192:256:256:32-i64:64-v16:16-v24:32-v32:32-v48:64-v96:128-v192:256-v256:256-v512:512-v1024:1024-v2048:2048-n32:64-S32-A5-G1-ni:7:8:9",`,
+        `index_bit_width = 64,`,
+        `simd_bit_width = 128`,
+        `> : !kgen.target`,
+    ]
+
+
+alias MI250X = Info(
+    name="MI250X",
+    vendor=Vendor.AMD_GPU,
+    api="hip",
+    arch_name="gfx940",
+    compile_options="",
+    compute=9.4,
+    version="CDNA2",
+    sm_count=208,  # 208 Compute Units based on MI250 specs
+    warp_size=64,
+    threads_per_sm=2048,
+    threads_per_warp=64,
+    warps_per_multiprocessor=32,  # 2048 threads per CU / 64 threads per wavefront = 32 wavefronts per CU
+    threads_per_multiprocessor=2048,
+    thread_blocks_per_multiprocessor=2,
+    shared_memory_per_multiprocessor=64 * _KB,  # 64KB LDS per CU
+    register_file_size=65536,
+    register_allocation_unit_size=256,
+    allocation_granularity="warp",
+    max_registers_per_thread=255,
+    max_registers_per_block=65536,
+    max_blocks_per_multiprocessor=2,
+    shared_memory_allocation_unit_size=128,
+    warp_allocation_granularity=4,
+    max_thread_block_size=1024,
+)
+
+
+# ===-----------------------------------------------------------------------===#
 # MI300X
 # ===-----------------------------------------------------------------------===#
 
@@ -1193,6 +1244,8 @@ struct Info(Stringable, Writable):
             return _get_b100_target()
         if self.name == "RTX5090":
             return _get_rtx5090_target()
+        if self.name == "MI250X":
+            return _get_mi250x_target()
         if self.name == "MI300X":
             return _get_mi300x_target()
         if self.name == "Radeon 780M":
@@ -1771,7 +1824,9 @@ fn _get_info_from_target[target_arch0: StaticString]() -> Info:
             StaticString("120"),
             StaticString("120a"),
             # AMD
+            StaticString("mi250x"),
             StaticString("mi300x"),
+            StaticString("gfx940"),
             StaticString("gfx942"),
             StaticString("gfx1100"),
             StaticString("gfx1101"),
@@ -1804,6 +1859,8 @@ fn _get_info_from_target[target_arch0: StaticString]() -> Info:
         return B200
     elif target_arch == "120" or target_arch == "120a":
         return RTX5090
+    elif target_arch == "gfx940" or target_arch == "mi250x":
+        return MI250X
     elif target_arch == "gfx942" or target_arch == "mi300x":
         return MI300X
     elif target_arch == "gfx1100":

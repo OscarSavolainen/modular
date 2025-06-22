@@ -29,6 +29,7 @@ from gpu.host import get_gpu_target
 from gpu.intrinsics import load_acquire, store_release
 from gpu.warp import shuffle_down, shuffle_idx, shuffle_up, shuffle_xor
 
+alias MI250X_TARGET = get_gpu_target["mi250x"]()
 alias MI300X_TARGET = get_gpu_target["mi300x"]()
 alias FULL_MASK_AMD = 2**WARP_SIZE - 1
 

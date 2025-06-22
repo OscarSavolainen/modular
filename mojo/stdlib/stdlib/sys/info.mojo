@@ -613,7 +613,7 @@ fn _is_sm_8x_or_newer() -> Bool:
 fn _is_sm_9x_or_newer() -> Bool:
     return _is_sm_9x() or _is_sm_100x_or_newer()
 
-
+_is_amd_cdna
 @always_inline("nodebug")
 fn _is_sm_100x_or_newer() -> Bool:
     return _is_sm_100x() or _is_sm_120x_or_newer()
@@ -672,6 +672,9 @@ fn _is_amd_rdna4() -> Bool:
 fn _is_amd_rdna() -> Bool:
     return _is_amd_rdna3() or _is_amd_rdna4()
 
+@always_inline("nodebug")
+fn _is_amd_mi250x() -> Bool:
+    return is_amd_gpu["amdgpu:gfx940"]()
 
 @always_inline("nodebug")
 fn _is_amd_mi300x() -> Bool:
@@ -686,15 +689,22 @@ fn _is_amd_mi355x() -> Bool:
 @always_inline("nodebug")
 fn _cnda_version() -> Int:
     constrained[
-        _is_amd_mi300x() or _is_amd_mi355x(),
+        _is_amd_mi250x() or _is_amd_mi300x() or _is_amd_mi355x(),
         "querying the cdna version is only supported on AMD hardware",
     ]()
 
     @parameter
-    if _is_amd_mi300x():
+    if _is_amd_mi250x():
+        return 2
+    elif _is_amd_mi300x():
         return 3
     else:
         return 4
+
+
+@always_inline("nodebug")
+fn _cnda_2_or_newer() -> Bool:
+    return _cnda_version() >= 2
 
 
 @always_inline("nodebug")
@@ -709,7 +719,7 @@ fn _cnda_4_or_newer() -> Bool:
 
 @always_inline("nodebug")
 fn _is_amd_cdna() -> Bool:
-    return _is_amd_mi300x() or _is_amd_mi355x()
+    return _is_amd_mi250x() or _is_amd_mi300x() or _is_amd_mi355x()
 
 
 @always_inline("nodebug")
