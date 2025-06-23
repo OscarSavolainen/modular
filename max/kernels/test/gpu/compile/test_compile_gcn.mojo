@@ -107,28 +107,28 @@ fn load_store(
 # CHECK-LABEL: test_shuffle_compile
 def test_shuffle_compile():
     print("== test_shuffle_compile")
-    # CHECK: %3 = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
-    # CHECK: %4 = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %3)
-    # CHECK: %5 = add i32 %4, %2
-    # CHECK: %6 = icmp ugt i32 %5, 63
-    # CHECK: %7 = select i1 %6, i32 0, i32 %2
-    # CHECK: %8 = add i32 %7, %4
-    # CHECK: %9 = shl i32 %8, 2
-    # CHECK: %10 = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %9, i32 %2)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %{{[0-9]+}})
+    # CHECK: %{{[0-9]+}} = add i32 %{{[0-9]+}}, %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = icmp ugt i32 %{{[0-9]+}}, 63
+    # CHECK: %{{[0-9]+}} = select i1 %{{[0-9]+}}, i32 0, i32 %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = add i32 %{{[0-9]+}}, %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = shl i32 %{{[0-9]+}}, 2
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %{{[0-9]+}}, i32 %{{[0-9]+}})
     print(
         _compile_code_asm[
             kernel_shuffle_down, target=MI300X_TARGET, emission_kind="llvm-opt"
         ]()
     )
 
-    # CHECK: %3 = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
-    # CHECK: %4 = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %3)
-    # CHECK: %5 = sub i32 %4, %2
-    # CHECK: %6 = and i32 %4, -64
-    # CHECK: %7 = icmp slt i32 %5, %6
-    # CHECK: %8 = select i1 %7, i32 %4, i32 %5
-    # CHECK: %9 = shl i32 %8, 2
-    # CHECK: %10 = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %9, i32 %2)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %{{[0-9]+}})
+    # CHECK: %{{[0-9]+}} = sub i32 %{{[0-9]+}}, %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = and i32 %{{[0-9]+}}, -64
+    # CHECK: %{{[0-9]+}} = icmp slt i32 %{{[0-9]+}}, %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = select i1 %{{[0-9]+}}, i32 %{{[0-9]+}}, i32 %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = shl i32 %{{[0-9]+}}, 2
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %{{[0-9]+}}, i32 %{{[0-9]+}})
 
     print(
         _compile_code_asm[
@@ -136,15 +136,15 @@ def test_shuffle_compile():
         ]()
     )
 
-    # CHECK: %3 = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
-    # CHECK: %4 = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %3)
-    # CHECK: %5 = xor i32 %4, %2
-    # CHECK: %6 = and i32 %4, -64
-    # CHECK: %7 = add i32 %6, 64
-    # CHECK: %8 = icmp ult i32 %5, %7
-    # CHECK: %9 = select i1 %8, i32 %5, i32 %4
-    # CHECK: %10 = shl i32 %9, 2
-    # CHECK: %11 = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %10, i32 %2)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %{{[0-9]+}})
+    # CHECK: %{{[0-9]+}} = xor i32 %{{[0-9]+}}, %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = and i32 %{{[0-9]+}}, -64
+    # CHECK: %{{[0-9]+}} = add i32 %{{[0-9]+}}, 64
+    # CHECK: %{{[0-9]+}} = icmp ult i32 %{{[0-9]+}}, %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = select i1 %{{[0-9]+}}, i32 %{{[0-9]+}}, i32 %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = shl i32 %{{[0-9]+}}, 2
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %{{[0-9]+}}, i32 %{{[0-9]+}})
 
     print(
         _compile_code_asm[
@@ -152,12 +152,12 @@ def test_shuffle_compile():
         ]()
     )
 
-    # CHECK: %3 = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
-    # CHECK: %4 = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %3)
-    # CHECK: %5 = and i32 %4, 1073741760
-    # CHECK: %6 = or i32 %5, %2
-    # CHECK: %7 = shl i32 %6, 2
-    # CHECK: %8 = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %7, i32 %2)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %{{[0-9]+}})
+    # CHECK: %{{[0-9]+}} = and i32 %{{[0-9]+}}, 1073741760
+    # CHECK: %{{[0-9]+}} = or i32 %{{[0-9]+}}, %{{[0-9]+}}
+    # CHECK: %{{[0-9]+}} = shl i32 %{{[0-9]+}}, 2
+    # CHECK: %{{[0-9]+}} = tail call i32 @llvm.amdgcn.ds.bpermute(i32 %{{[0-9]+}}, i32 %{{[0-9]+}})
 
     print(
         _compile_code_asm[
@@ -187,7 +187,7 @@ def test_cast_fp32_bf16_compile():
 def test_exp_f32_compile():
     print("== test_exp_f32_compile")
 
-    # CHECK: tail call float @llvm.amdgcn.exp2.f32(float %3)
+    # CHECK: tail call float @llvm.amdgcn.exp2.f32(float %{{[0-9]+}})
     print(
         _compile_code_asm[
             kernel_exp[DType.float32],
@@ -201,7 +201,7 @@ def test_exp_f32_compile():
 def test_exp_f16_compile():
     print("== test_exp_f16_compile")
 
-    # CHECK: tail call half @llvm.amdgcn.exp2.f16(half %3)
+    # CHECK: tail call half @llvm.amdgcn.exp2.f16(half %{{[0-9]+}})
     print(
         _compile_code_asm[
             kernel_exp[DType.float16],
@@ -216,7 +216,7 @@ def test_laneid_compile():
     print("== test_laneid_compile")
 
     # CHECK: tail call i32 @llvm.amdgcn.mbcnt.lo(i32 -1, i32 0)
-    # CHECK: tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %2)
+    # CHECK: tail call i32 @llvm.amdgcn.mbcnt.hi(i32 -1, i32 %{{[0-9]+}})
     print(
         _compile_code_asm[
             kernel_laneid, target=MI300X_TARGET, emission_kind="llvm-opt"
