@@ -752,20 +752,37 @@ alias RTX2060 = Info(
 
 fn _get_mi250x_target() -> __mlir_type.`!kgen.target`:
     """
-    Creates an MLIR target configuration for AMD MI250X GPU.
+    Creates an MLIR target configuration for AMD MI250/MI250X GPU.
+    Supports both gfx9010 (MI250) and gfx940 (MI250X) architectures.
 
     Returns:
-        MLIR target configuration for MI250X.
+        MLIR target configuration for MI250/MI250X.
     """
-    return __mlir_attr[
-        `#kgen.target<triple = "amdgcn-amd-amdhsa", `,
-        `arch = "gfx940", `,
-        `features = "", `,
-        `data_layout = "e-p:64:64-p1:64:64-p2:32:32-p3:32:32-p4:64:64-p5:32:32-p6:32:32-p7:160:256:256:32-p8:128:128:128:48-p9:192:256:256:32-i64:64-v16:16-v24:32-v32:32-v48:64-v96:128-v192:256-v256:256-v512:512-v1024:1024-v2048:2048-n32:64-S32-A5-G1-ni:7:8:9",`,
-        `index_bit_width = 64,`,
-        `simd_bit_width = 128`,
-        `> : !kgen.target`,
-    ]
+    # Use the actual detected architecture from the accelerator
+    alias detected_arch = _accelerator_arch()
+    
+    @parameter
+    if "gfx9010" in detected_arch:
+        return __mlir_attr[
+            `#kgen.target<triple = "amdgcn-amd-amdhsa", `,
+            `arch = "gfx9010", `,
+            `features = "", `,
+            `data_layout = "e-p:64:64-p1:64:64-p2:32:32-p3:32:32-p4:64:64-p5:32:32-p6:32:32-p7:160:256:256:32-p8:128:128:128:48-p9:192:256:256:32-i64:64-v16:16-v24:32-v32:32-v48:64-v96:128-v192:256-v256:256-v512:512-v1024:1024-v2048:2048-n32:64-S32-A5-G1-ni:7:8:9",`,
+            `index_bit_width = 64,`,
+            `simd_bit_width = 128`,
+            `> : !kgen.target`,
+        ]
+    else:
+        # Default to gfx940 for MI250X
+        return __mlir_attr[
+            `#kgen.target<triple = "amdgcn-amd-amdhsa", `,
+            `arch = "gfx940", `,
+            `features = "", `,
+            `data_layout = "e-p:64:64-p1:64:64-p2:32:32-p3:32:32-p4:64:64-p5:32:32-p6:32:32-p7:160:256:256:32-p8:128:128:128:48-p9:192:256:256:32-i64:64-v16:16-v24:32-v32:32-v48:64-v96:128-v192:256-v256:256-v512:512-v1024:1024-v2048:2048-n32:64-S32-A5-G1-ni:7:8:9",`,
+            `index_bit_width = 64,`,
+            `simd_bit_width = 128`,
+            `> : !kgen.target`,
+        ]
 
 
 alias MI250X = Info(
@@ -1824,8 +1841,10 @@ fn _get_info_from_target[target_arch0: StaticString]() -> Info:
             StaticString("120"),
             StaticString("120a"),
             # AMD
+            StaticString("mi250"),
             StaticString("mi250x"),
             StaticString("mi300x"),
+            StaticString("gfx9010"),
             StaticString("gfx940"),
             StaticString("gfx942"),
             StaticString("gfx1100"),
@@ -1859,7 +1878,7 @@ fn _get_info_from_target[target_arch0: StaticString]() -> Info:
         return B200
     elif target_arch == "120" or target_arch == "120a":
         return RTX5090
-    elif target_arch == "gfx940" or target_arch == "mi250x":
+    elif target_arch == "gfx9010" or target_arch == "gfx940" or target_arch == "mi250" or target_arch == "mi250x":
         return MI250X
     elif target_arch == "gfx942" or target_arch == "mi300x":
         return MI300X
